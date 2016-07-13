@@ -10,8 +10,7 @@ import java.util.Set;
 
 public class MaxWordLengthReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
 
-    private StringBuilder sb = new StringBuilder();
-
+    private Set<String> uniqueWords = new HashSet<String>();
     private int wordLen = 0;
 
     @Override
@@ -24,25 +23,15 @@ public class MaxWordLengthReducer extends Reducer<IntWritable, Text, IntWritable
             return;
 
         if (len > wordLen) {
-            sb.setLength(0);
+            uniqueWords.clear();
             wordLen = len;
         }
 
-//        for (Text words : values) {
-//            sb.append(words.toString());
-//        }
-
-        Set<String> uniqueWords = new HashSet<String>();
         for (Text words : values) {
             for (String word : words.toString().split(MaxWordLengthMapper.DELIMITER)) {
                 if (word.length() > 0)
                     uniqueWords.add(word);
             }
-        }
-        StringBuilder sb = new StringBuilder();
-
-        for (String uniqueWord : uniqueWords) {
-            sb.append(uniqueWord.toString()).append(MaxWordLengthMapper.DELIMITER);
         }
 
     }
@@ -51,6 +40,11 @@ public class MaxWordLengthReducer extends Reducer<IntWritable, Text, IntWritable
     protected void cleanup(Context context
     ) throws IOException, InterruptedException {
         if (wordLen > 0) {
+            StringBuilder sb = new StringBuilder();
+
+            for (String uniqueWord : uniqueWords) {
+                sb.append(uniqueWord.toString()).append(MaxWordLengthMapper.DELIMITER);
+            }
             context.write(new IntWritable(wordLen), new Text(sb.toString()));
         }
     }

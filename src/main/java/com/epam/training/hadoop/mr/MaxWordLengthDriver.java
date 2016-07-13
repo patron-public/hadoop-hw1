@@ -14,16 +14,12 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 public class MaxWordLengthDriver extends Configured implements Tool {
-    public int run(String[] args) throws Exception{
+    public int run(String[] args) throws Exception {
 
         if (args.length != 2) {
             System.err.println("Use hdmr <input path> <output path>");
             System.exit(-1);
         }
-//        Configuration conf = getConf();
-//        conf.set("mapreduce.output.key.field.separator", ";");
-//        conf.set("mapreduce.output.textoutputformat.separator", ";");
-//        conf.set("mapreduce.textoutputformat.separator", ";");
 
         Job job = Job.getInstance();
         job.setJarByClass(MaxWordLengthDriver.class);
@@ -47,7 +43,7 @@ public class MaxWordLengthDriver extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        int res  = ToolRunner.run(conf, new MaxWordLengthDriver(), args);
+        int res = ToolRunner.run(conf, new MaxWordLengthDriver(), args);
         System.exit(res);
     }
 }
