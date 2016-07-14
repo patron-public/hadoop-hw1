@@ -16,6 +16,7 @@ public class MaxWordLengthMapper extends Mapper<LongWritable, Text, IntWritable,
 
     private StringBuilder sb = new StringBuilder();
     private Set<String> longWords = new HashSet<String>();
+    private int wordLen;
 
     public enum MAPPER_STATS {
         EMPTY_LINE
@@ -24,9 +25,8 @@ public class MaxWordLengthMapper extends Mapper<LongWritable, Text, IntWritable,
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 
-        String line = value.toString();
-        int wordLen = 0;
-        String[] words = line.split(SPLIT_REGEX);
+        wordLen = 0;
+        String[] words = value.toString().split(SPLIT_REGEX);
 
         for (String word : words) {
 
