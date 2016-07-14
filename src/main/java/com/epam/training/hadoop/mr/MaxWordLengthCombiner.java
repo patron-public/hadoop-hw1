@@ -10,24 +10,30 @@ import java.util.Set;
 
 public class MaxWordLengthCombiner extends Reducer<IntWritable, Text, IntWritable, Text> {
 
+    private Set<String> uniqueWords;
+
     @Override
     public void reduce(IntWritable key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
 
-        Set<String> uniqueWords = new HashSet<String>();
-        for (Text words : values) {
-            for (String word : words.toString().split(MaxWordLengthMapper.DELIMITER)) {
-                if (word.length() > 0)
+        if (uniqueWords == null) {
+
+            uniqueWords = new HashSet<String>();
+
+            for (Text words : values) {
+                for (String word : words.toString().split(MaxWordLengthMapper.DELIMITER)) {
                     uniqueWords.add(word);
+                }
             }
-        }
-        StringBuilder sb = new StringBuilder();
 
-        for (String uniqueWord : uniqueWords) {
-            sb.append(uniqueWord.toString()).append(MaxWordLengthMapper.DELIMITER);
+            StringBuilder sb = new StringBuilder();
+            for (String uniqueWord : uniqueWords) {
+                sb.append(uniqueWord.toString()).append(MaxWordLengthMapper.DELIMITER);
+            }
+
+            context.write(key, new Text(sb.toString()));
         }
 
-        context.write(key, new Text(sb.toString()));
     }
 
 }

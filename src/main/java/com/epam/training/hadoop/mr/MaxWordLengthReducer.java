@@ -10,42 +10,31 @@ import java.util.Set;
 
 public class MaxWordLengthReducer extends Reducer<IntWritable, Text, IntWritable, Text> {
 
-    private Set<String> uniqueWords = new HashSet<String>();
-    private int wordLen = 0;
+    private Set<String> uniqueWords;
 
     @Override
     public void reduce(IntWritable key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
 
-        int len = key.get();
+        if (uniqueWords == null) {
 
-        if (len < wordLen)
-            return;
+            uniqueWords = new HashSet<String>();
 
-        if (len > wordLen) {
-            uniqueWords.clear();
-            wordLen = len;
-        }
-
-        for (Text words : values) {
-            for (String word : words.toString().split(MaxWordLengthMapper.DELIMITER)) {
-                if (word.length() > 0)
+            for (Text words : values) {
+                for (String word : words.toString().split(MaxWordLengthMapper.DELIMITER)) {
                     uniqueWords.add(word);
+                }
             }
-        }
 
-    }
-
-    @Override
-    protected void cleanup(Context context
-    ) throws IOException, InterruptedException {
-        if (wordLen > 0) {
             StringBuilder sb = new StringBuilder();
-
             for (String uniqueWord : uniqueWords) {
                 sb.append(uniqueWord.toString()).append(MaxWordLengthMapper.DELIMITER);
             }
-            context.write(new IntWritable(wordLen), new Text(sb.toString()));
+
+            sb.setLength(sb.length() - 1);
+
+            context.write(new IntWritable(-1 * key.get()), new Text(sb.toString()));
         }
     }
+
 }

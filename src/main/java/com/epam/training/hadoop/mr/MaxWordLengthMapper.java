@@ -11,8 +11,9 @@ import java.util.Set;
 
 public class MaxWordLengthMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
 
-    private static final String SPLIT_REGEX = "\\W";
     public static final String DELIMITER = ";";
+    private static final String SPLIT_REGEX = "\\W";
+
     private StringBuilder sb = new StringBuilder();
     private Set<String> longWords = new HashSet<String>();
 
@@ -46,8 +47,8 @@ public class MaxWordLengthMapper extends Mapper<LongWritable, Text, IntWritable,
             for (String longWord : longWords) {
                 sb.append(longWord).append(DELIMITER);
             }
+            context.write(new IntWritable(-1 * wordLen), new Text(sb.toString()));
 
-            context.write(new IntWritable(wordLen), new Text(sb.toString()));
         } else {
             context.getCounter(MAPPER_STATS.EMPTY_LINE).increment(1);
         }
