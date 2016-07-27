@@ -1,6 +1,6 @@
 # hadoop-hw1
-BUILD WITH:
-maven
+BUILD WITH MAVEN:
+mvn assembly:assembly
 
 RUN WITH:
 yarn jar hw1-1.0.jar com.epam.training.hadoop.mr.MaxWordLengthDriver /training/hadoop/hw1/input /training/hadoop/hw1/output
